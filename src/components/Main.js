@@ -1,7 +1,7 @@
 import React from "react";
 import avatar from "../images/Avatar.png";
 
-export default function (handleEditAvatarClick,handleEditProfileClick,handleAddPlaceClick) {
+export default function Main({handleEditPicClick,handleEditProfileClick,handleNewPostClick}) {
   return (
     <div>
       <main className="content">
@@ -12,7 +12,7 @@ export default function (handleEditAvatarClick,handleEditProfileClick,handleAddP
               src={avatar}
               alt="imagen de perfil"
             />
-            <button className="profile__image-btn" onClick={handleEditAvatarClick}></button>
+            <button className="profile__image-btn" onClick={handleEditPicClick}></button>
           </div>
           <div className="profile__container">
             <div className="profile__container-b">
@@ -21,7 +21,7 @@ export default function (handleEditAvatarClick,handleEditProfileClick,handleAddP
             </div>
             <h4 className="profile__description">Explorador</h4>
           </div>
-          <button className="profile__add-btn" onClick={handleAddPlaceClick}>+</button>
+          <button className="profile__add-btn" onClick={handleNewPostClick}>+</button>
         </section>
         <section className="update"></section>
       </main>

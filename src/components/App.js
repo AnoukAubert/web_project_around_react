@@ -24,25 +24,33 @@ function App() {
     setOpenPopupNewPost(true)
   };
 
+  const closeAllPopups = () => {
+    setOpenPopupErase(false)
+    setOpenPopupZoom(false)
+    setOpenPopupProfile(false)
+    setOpenPopupNewPost(false)
+    setOpenPopupPic(false)
+  }
+
   return (
     <div className="page">
       <Header />
       <Main 
-      handleEditAvatarClick={handleEditAvatarClick}
+      handleEditPicClick={handleEditAvatarClick}
       handleEditProfileClick={handleEditProfileClick}
-      handleAddPlaceClick={handleAddPlaceClick}
+      handleNewPostClick={handleAddPlaceClick}
       />
       <Footer />
       
-      <PopupWithForm open={up} title="Editar Perfil" /*onClose={() = > {setOpenPopupProfile=(false)}}*/>
+      <PopupWithForm open={openPopupProfile} title="Editar Perfil" onClose={closeAllPopups} >
         <>
               <input
               id="popup__text"
               type="text"
               className="popup__text"
               name="name"
-              minLenght="2"
-              maxLenght="40"
+              minLength="2"
+              maxLength="40"
               required
             />
             <p className="popup__error popup__text-error"></p>
@@ -51,8 +59,8 @@ function App() {
               type="text"
               className="popup__about-me"
               name="about"
-              minLenght="2"
-              maxLenght="200"
+              minLength="2"
+              maxLength="200"
               required
             />
             <p className="popup__error popup__job-error"></p>
