@@ -1,0 +1,10 @@
+.zoom__close-btn {
+  margin-left: 87.5%;
+  border: none;
+  background: url(../../../images/Closecon.png) center no-repeat;
+  cursor: pointer;
+  height: 40px;
+  width: 40px;
+  opacity: 1;
+  transition: 0.3s;
+}

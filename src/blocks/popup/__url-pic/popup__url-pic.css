@@ -1,0 +1,14 @@
+.popup__url-pic {
+  width: 358px;
+  height: 27px;
+  border: none;
+  border-bottom: 1px solid #cbcbcb;
+  margin-left: 36px;
+  margin-top: 30px;
+}
+@media screen and (min-width: 0px) and (max-width: 768px) {
+  .popup__url-pic {
+    margin-left: 10%;
+    width: 80%;
+  }
+}
