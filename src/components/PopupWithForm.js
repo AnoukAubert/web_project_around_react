@@ -1,6 +1,6 @@
 import Popup from "./Popup";
 
-export default function PopupWithForm ({children, open, title, onClose}) {
+export default function PopupWithForm ({children, open, title, confirmation, onClose}) {
     return (
         <>
         <Popup open={open}>
@@ -9,7 +9,7 @@ export default function PopupWithForm ({children, open, title, onClose}) {
           <h3 className="popup__title">{title}</h3>
           <form className="popup__form" noValidate>
             {children}
-            <button className="popup__create-btn create-btn-disabled" type="submit">Guardar</button>
+            <button className="popup__create-btn create-btn-disabled" type="submit">{confirmation}</button>
           </form>
         </div>
         </Popup>
