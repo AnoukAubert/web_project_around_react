@@ -1,10 +1,10 @@
 import Popup from "./Popup";
 
-export default function ImagePopup({open, onClose, selectedCard}) {
+export default function ImagePopup({ open, onClose, selectedCard }) {
   return (
     <>
       <Popup open={open}>
-        <section className="popup popup_zoom">
+        <>
           <button
             onClick={onClose}
             className="popup__close-btn popup__close-btn-zoom"
@@ -15,7 +15,7 @@ export default function ImagePopup({open, onClose, selectedCard}) {
             alt={selectedCard.name}
           />
           <h3 className="popup__image-title">{selectedCard.name}</h3>
-        </section>
+        </>
       </Popup>
     </>
   );
