@@ -1,12 +1,12 @@
 import Popup from "./Popup";
 
-export default function ImagePopup({ open, onClose, selectedCard }) {
+export default function ImagePopup({ open, close, selectedCard }) {
   return (
     <>
       <Popup open={open}>
         <>
           <button
-            onClick={onClose}
+            onClick={close}
             className="popup__close-btn popup__close-btn-zoom"
           ></button>
           <img

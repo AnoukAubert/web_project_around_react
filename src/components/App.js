@@ -4,18 +4,30 @@ import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
 import PopupWithForm from "./PopupWithForm";
-import { api } from "../utils/Api";
+import { api } from "../utils/api";
 import ImagePopup from "./ImagePopup";
+import { CurrentUserContext } from "../contexts/CurrentUserContext";
+import AddPlacePopup from "./AddPlacePopup";
+import EditAvatarPopup from "./EditAvatarPopup";
+import EditProfilePopup from "./EditProfilePopup";
 
 function App() {
   const [openPopupProfile, setOpenPopupProfile] = React.useState(false);
   const [openPopupNewPost, setOpenPopupNewPost] = React.useState(false);
   const [openPopupZoom, setOpenPopupZoom] = React.useState(false);
-  const [openPopupPic, setOpenPopupPic] = React.useState(false); 
-  const [openPopupErase, setOpenPopupErase] = React.useState(false); //no esta config para abrir
+  const [openPopupPic, setOpenPopupPic] = React.useState(false);
+  const [openPopupErase, setOpenPopupErase] = React.useState(false);
   const [cards, setCards] = React.useState([]);
   const [selectedCard, setSelectedCard] = React.useState({});
   const [currentUser, setCurrentUser] = React.useState({});
+
+  const closeAllPopups = () => {
+    setOpenPopupErase(false);
+    setOpenPopupZoom(false);
+    setOpenPopupProfile(false);
+    setOpenPopupNewPost(false);
+    setOpenPopupPic(false);
+  };
 
   const handleEditAvatarClick = () => {
     setOpenPopupPic(true);
@@ -29,117 +41,127 @@ function App() {
   const handleZoomClick = (name, link) => {
     setOpenPopupZoom(true);
     setSelectedCard({
-      name, link
-    }); 
-  }
+      name,
+      link,
+    });
+  };
+  const handleImageAddLike = (card) => {
+    return api.addLike(card._id).then((cardResponse) => {
+      card.likes = cardResponse.likes;
+      setCards([...cards]);
+    });
+  };
+  const handleImageRemoveLike = (card) => {
+    return api.removeLike(card._id).then((cardResponse) => {
+      card.likes = cardResponse.likes;
+      setCards([...cards]);
+    });
+  };
+  const handleImageRemove = (card) => {
+    setSelectedCard(card);
+    setOpenPopupErase(true);
+  };
 
-  const closeAllPopups = () => {
-    setOpenPopupErase(false);
-    setOpenPopupZoom(false);
-    setOpenPopupProfile(false);
-    setOpenPopupNewPost(false);
-    setOpenPopupPic(false);
+  const handleSubmitEditProfile = ({ name, about }) => {
+    return api
+      .updateUser(name, about)
+      .then((user) => {
+        setCurrentUser(user);
+      })
+      .then(() => {
+        closeAllPopups();
+      });
+  };
+
+  const removeSelectedCard = () => {
+    return api
+      .deleteCard(selectedCard._id)
+      .then(() => {
+        setCards(cards.filter((card) => card._id !== selectedCard._id));
+      })
+      .then(() => {
+        closeAllPopups();
+      });
+  };
+
+  const handleSubmitEditAvatar = ({ pic }) => {
+    return api
+      .updateAvatar(pic)
+      .then((user) => {
+        setCurrentUser(user);
+      })
+      .then(() => {
+        closeAllPopups();
+      });
+  };
+  const handleSubmitAddPlace = ({ title, link }) => {
+    return api
+      .insertCard(link, title)
+      .then((card) => {
+        setCards([card, ...cards]);
+      })
+      .then(() => {
+        closeAllPopups();
+      });
   };
 
   React.useEffect(() => {
-    api.getCards().then(cards => {
-      setCards(cards)
-    })
-    api.getUserInfo().then(user => {
+    api.getCards().then((cards) => {
+      setCards(cards);
+    });
+    api.getUserInfo().then((user) => {
       setCurrentUser(user);
-    })
-  }, [])
+    });
+  }, []);
 
   return (
-    <div className="page">
-      <Header />
-      <Main
-        handleEditPicClick={handleEditAvatarClick}
-        handleEditProfileClick={handleEditProfileClick}
-        handleNewPostClick={handleAddPlaceClick}
-        handleZoomClick={handleZoomClick}
-        cards={cards}
-        user={currentUser}
-      />
-      <Footer />
+    <>
+      <CurrentUserContext.Provider value={currentUser}>
+        <div className="page">
+          <Header />
+          <Main
+            handleEditPicClick={handleEditAvatarClick}
+            handleEditProfileClick={handleEditProfileClick}
+            handleNewPostClick={handleAddPlaceClick}
+            handleZoomClick={handleZoomClick}
+            handleImageAddLike={handleImageAddLike}
+            handleImageRemove={handleImageRemove}
+            handleImageRemoveLike={handleImageRemoveLike}
+            cards={cards}
+          />
+          <Footer />
 
-      <PopupWithForm
-        open={openPopupProfile}
-        title="Editar Perfil"
-        confirmation="Guardar"
-        onClose={closeAllPopups}
-      >
-        <>
-          <input
-            id="popup__text"
-            type="text"
-            className="popup__text"
-            name="name"
-            minLength="2"
-            maxLength="40"
-            required
+          <EditProfilePopup
+            handleSubmit={handleSubmitEditProfile}
+            open={openPopupProfile}
+            close={closeAllPopups}
           />
-          <p className="popup__error popup__text-error"></p>
-          <input
-            id="popup__job"
-            type="text"
-            className="popup__about-me"
-            name="about"
-            minLength="2"
-            maxLength="200"
-            required
+          <AddPlacePopup
+            handleSubmit={handleSubmitAddPlace}
+            open={openPopupNewPost}
+            close={closeAllPopups}
           />
-          <p className="popup__error popup__job-error"></p>
-        </>
-      </PopupWithForm>
-      <PopupWithForm
-        open={openPopupNewPost}
-        title="Nuevo Lugar"
-        confirmation="Crear"
-        onClose={closeAllPopups}
-      >
-        <input
-          id="popup__title"
-          type="text"
-          className="popup__text"
-          name="title"
-          minLength="2"
-          maxLength="30"
-          required
-        />
-        <p className="popup__error popup__title-error"></p>
-        <input
-          id="popup__url"
-          className="popup__url"
-          type="url"
-          name="link"
-          required
-        />
-        <p className="popup__error popup__url-error"></p>
-      </PopupWithForm>
-      <ImagePopup selectedCard={selectedCard} open={openPopupZoom} onClose={closeAllPopups}></ImagePopup>
-      <PopupWithForm
-        open={openPopupPic}
-        title="Cambiar Imagen de Perfil"
-        confirmation="Guardar"
-        onClose={closeAllPopups}
-      >
-        <input
-          id="popup__url-pic"
-          className="popup__url-pic"
-          type="url"
-          name="pic"
-          required
-        />
-        <p className="popup__error popup__url-pic-error"></p>
-      </PopupWithForm>
-      <PopupWithForm
-        open={openPopupErase}
-        title="¿Estás Seguro/a?"
-        confirmation="Sí"
-        onClose={closeAllPopups}
-      ></PopupWithForm>
-    </div>
+          <ImagePopup
+            selectedCard={selectedCard}
+            open={openPopupZoom}
+            close={closeAllPopups}
+          ></ImagePopup>
+          <EditAvatarPopup
+            handleSubmit={handleSubmitEditAvatar}
+            open={openPopupPic}
+            close={closeAllPopups}
+          />
+          <PopupWithForm
+            open={openPopupErase}
+            title="¿Estás Seguro/a?"
+            confirmation="Sí"
+            handleSubmit={removeSelectedCard}
+            activeSubmit={true}
+            onClose={closeAllPopups}
+          ></PopupWithForm>
+        </div>
+      </CurrentUserContext.Provider>
+    </>
   );
 }
 
